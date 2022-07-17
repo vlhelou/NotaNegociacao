@@ -6,17 +6,21 @@ using UglyToad.PdfPig.DocumentLayoutAnalysis.ReadingOrderDetector;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.WordExtractor;
 
 
+var conteudos = ImportaConteudos(@"D:\Temporario\Notas\Junho.pdf");
 
-var sb = new StringBuilder();
+NotaNegociacao.Importacao imp = new NotaNegociacao.Importacao(conteudos);
 
-using (var document = PdfDocument.Open(@"D:\Temporario\Notas\Janeiro.pdf"))
+
+
+
+static List<List<string>> ImportaConteudos(string arquivo)
 {
+    List<List<string>> retorno = new();
+
+    using var document = PdfDocument.Open(arquivo);
     foreach (var page in document.GetPages())
     {
-        // 0. Preprocessing
         var letters = page.Letters; // no preprocessing
-
-        // 1. Extract words
         var wordExtractor = NearestNeighbourWordExtractor.Instance;
         var wordExtractorOptions = new NearestNeighbourWordExtractor.NearestNeighbourWordExtractorOptions()
         {
@@ -56,31 +60,16 @@ using (var document = PdfDocument.Open(@"D:\Temporario\Notas\Janeiro.pdf"))
         };
 
         var words = wordExtractor.GetWords(letters);
-        string texto = string.Join('|', words);
-        
-
-        // 2. Segment page
-        var pageSegmenter = DocstrumBoundingBoxes.Instance;
-        var pageSegmenterOptions = new DocstrumBoundingBoxes.DocstrumBoundingBoxesOptions()
+        List<string> palavaras = new();
+        foreach (var word in words)
         {
-
-        };
-
-        var textBlocks = pageSegmenter.GetBlocks(words);
-
-        // 3. Postprocessing
-        var readingOrder = UnsupervisedReadingOrderDetector.Instance;
-        var orderedTextBlocks = readingOrder.Get(textBlocks);
-
-        // 4. Extract text
-        foreach (var block in orderedTextBlocks)
-        {
-            sb.Append(block.Text.Normalize(NormalizationForm.FormKC)); // normalise text
-            sb.AppendLine();
+            palavaras.Add(word.ToString());
         }
-        Console.WriteLine(sb.ToString());
-        sb.AppendLine();
-    }
-}
+        retorno.Add(palavaras);
+        // 1. Extract words
+    };
 
-Console.WriteLine(sb.ToString());
+
+    return retorno;
+
+}
