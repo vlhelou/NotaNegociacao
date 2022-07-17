@@ -9,7 +9,8 @@ namespace NotaNegociacao.Dados;
 
 internal class DB : DbContext
 {
-    public DbSet<Operacao>? Operacao { get; set; }
+    public DbSet<Operacao> Operacao { get; set; }
+    public DbSet<Diario> Diario { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlServer($"Server=.;Database=NotasOperacao;Trusted_Connection=True");
 }
