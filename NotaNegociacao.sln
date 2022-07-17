@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotaNegociacao", "NotaNegociacao.csproj", "{BF88E342-2235-453D-A38E-40BCE041685F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF88E342-2235-453D-A38E-40BCE041685F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF88E342-2235-453D-A38E-40BCE041685F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF88E342-2235-453D-A38E-40BCE041685F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF88E342-2235-453D-A38E-40BCE041685F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ECF6FF54-3518-4D69-A10B-5120F968501F}
+	EndGlobalSection
+EndGlobal
