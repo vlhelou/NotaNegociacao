@@ -6,7 +6,7 @@ using UglyToad.PdfPig.DocumentLayoutAnalysis.ReadingOrderDetector;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.WordExtractor;
 
 
-var conteudos = ImportaConteudos(@"D:\Temporario\Notas\Junho.pdf");
+var conteudos = ImportaConteudos(@"C:\Users\vlhel\OneDrive\Bolsa\2022\XPINC_NOTA_NEGOCIACAO_B3_12_2022.pdf");
 
 NotaNegociacao.Importacao imp = new NotaNegociacao.Importacao(conteudos);
 

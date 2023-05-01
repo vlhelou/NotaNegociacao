@@ -15,7 +15,7 @@ internal class Importacao
     {
         System.Globalization.CultureInfo myInfo = System.Globalization.CultureInfo.CurrentUICulture;
 
-        
+
         foreach (var conteudo in conteudos)
         {
             //for (int i = 0; i < conteudo.Count; i++)
@@ -24,8 +24,11 @@ internal class Importacao
             //}
 
             dataPregao = DataPregao(conteudo);
-            LeCabecalho(conteudo);
-            LeConteudo(conteudo);
+            if (!db.Diario.Where(p => p.DataPregao == dataPregao).Any())
+            {
+                LeCabecalho(conteudo);
+                LeConteudo(conteudo);
+            }
         }
         db.SaveChanges();
     }
@@ -70,7 +73,7 @@ internal class Importacao
     {
         if (conteudo.Count < 13)
             return;
-        
+
         Console.WriteLine($"{dataPregao}");
         int ponto = 0;
         if (conteudo[9] == "TRADE")
