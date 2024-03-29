@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NotaNegociacao;
@@ -16,18 +17,19 @@ internal class Importacao
         System.Globalization.CultureInfo myInfo = System.Globalization.CultureInfo.CurrentUICulture;
 
 
-        foreach (var conteudo in conteudos)
+        foreach (var pagina in conteudos)
         {
-            //for (int i = 0; i < conteudo.Count; i++)
+            //for (int i = 0; i < pagina.Count; i++)
             //{
-            //    Console.WriteLine($"{i.ToString().PadLeft(4)} {conteudo[i]}");
+            //    Console.WriteLine($"{i.ToString().PadLeft(4)} {pagina[i]}");
             //}
 
-            dataPregao = DataPregao(conteudo);
+            dataPregao = DataPregao(pagina);
+            Console.WriteLine($"\t{dataPregao.ToString("dd/MM/yyyy")}");
             if (!db.Diario.Where(p => p.DataPregao == dataPregao).Any())
             {
-                LeCabecalho(conteudo);
-                LeConteudo(conteudo);
+                LeCabecalho(pagina);
+                LeConteudo(pagina);
             }
         }
         db.SaveChanges();
@@ -36,7 +38,7 @@ internal class Importacao
     DateTime DataPregao(List<string> conteudo)
     {
         var ponto = conteudo.IndexOf("pregão");
-        if (DateTime.TryParseExact(conteudo[ponto + 1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtOperacao))
+        if (DateTime.TryParseExact(conteudo[ponto + 3], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtOperacao))
             return dtOperacao;
 
         return new DateTime();
@@ -44,7 +46,14 @@ internal class Importacao
 
     decimal Str2Decimal(string valor)
     {
-        return decimal.Parse(valor, System.Globalization.CultureInfo.CurrentCulture);
+        if (string.IsNullOrEmpty(valor.Trim()))
+            return 0;
+
+        var localizado = Regex.Match(valor, @"[0-9,]+");
+        if (localizado.Success)
+            return decimal.Parse(localizado.Value, System.Globalization.CultureInfo.CurrentCulture);
+
+        return 0;
     }
 
     void LeCabecalho(List<string> conteudo)
@@ -54,17 +63,26 @@ internal class Importacao
         Dados.Diario diario = new Dados.Diario();
         diario.DataPregao = dataPregao;
         int ponto = conteudo.IndexOf("negócios");
-        diario.Bruto = Str2Decimal(conteudo[ponto + 9]);
-        if (conteudo[ponto + 13].Trim() == "D")
+        diario.Bruto = Str2Decimal(conteudo[ponto + 5]);
+        if (conteudo[ponto + 7].Trim() == "D")
             diario.Bruto *= -1;
 
-        diario.IRRF = Str2Decimal(conteudo[ponto + 38]);
-        diario.TaxaOperacional = Str2Decimal(conteudo[ponto + 40]);
-        diario.RegistroB3 = Str2Decimal(conteudo[ponto + 42]);
-        diario.TaxaB3 = Str2Decimal(conteudo[ponto + 44]);
-        diario.Impostos = Str2Decimal(conteudo[ponto + 75]);
-        diario.Liquido = Str2Decimal(conteudo[ponto + 139]);
-        if (conteudo[ponto + 143].Trim() == "D")
+
+        string IRRF = conteudo[ponto + 22];
+        string TaxaOperacional = conteudo[ponto + 23];
+        string RegistroB3 = conteudo[ponto + 24];
+        string taxaB3 = conteudo[ponto + 25];
+        string Impostos = conteudo[ponto + 42];
+        string Liquido = conteudo[ponto + 76];
+        string debitoCredito = conteudo[ponto + 78];
+
+        diario.IRRF = Str2Decimal(IRRF);
+        diario.TaxaOperacional = Str2Decimal(TaxaOperacional);
+        diario.RegistroB3 = Str2Decimal(RegistroB3);
+        diario.TaxaB3 = Str2Decimal(taxaB3);
+        diario.Impostos = Str2Decimal(Impostos);
+        diario.Liquido = Str2Decimal(Liquido);
+        if (debitoCredito.Trim() == "D")
             diario.Liquido *= -1;
         db.Add(diario);
     }
